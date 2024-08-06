@@ -7,10 +7,7 @@ import com.emssanareps.affiliate.manager.service.AffiliateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,11 +34,23 @@ public class AffiliateController {
         );
     }
 
-    @PostMapping("/all")
+    @GetMapping("/all")
     public ResponseEntity<ResponseDto<List<AffiliateResponse>>> all() {
         return new ResponseEntity<>(
                 ResponseDto.<List<AffiliateResponse>>builder()
                         .data(affiliateService.readAll())
+                        .status(HttpStatus.OK)
+                        .message("Operacion exitosa")
+                        .build(),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/r/{id}")
+    public ResponseEntity<ResponseDto<AffiliateResponse>> readById(@PathVariable("id") Long affiliateId) {
+        return new ResponseEntity<>(
+                ResponseDto.<AffiliateResponse>builder()
+                        .data(affiliateService.readById(affiliateId))
                         .status(HttpStatus.OK)
                         .message("Operacion exitosa")
                         .build(),

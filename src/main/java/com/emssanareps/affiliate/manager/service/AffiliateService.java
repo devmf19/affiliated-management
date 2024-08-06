@@ -8,4 +8,6 @@ import java.util.List;
 public interface AffiliateService {
     AffiliateResponse create(AffiliateRequest affiliateRequest);
     List<AffiliateResponse> readAll();
+
+    AffiliateResponse readById(Long affiliateId);
 }

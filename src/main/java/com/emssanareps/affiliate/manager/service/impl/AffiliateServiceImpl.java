@@ -84,4 +84,13 @@ public class AffiliateServiceImpl implements AffiliateService {
     public List<AffiliateResponse> readAll() {
         return affiliateMapper.toResponseList(affiliateRepository.findAll());
     }
+
+    @Override
+    public AffiliateResponse readById(Long affiliateId) {
+        return affiliateRepository.findById(affiliateId)
+                .map(affiliateMapper::toResponse)
+                .orElseThrow(
+                        () -> new IllegalArgumentException("No se ha encontrado un afilido con id ".concat(affiliateId.toString()))
+                );
+    }
 }
