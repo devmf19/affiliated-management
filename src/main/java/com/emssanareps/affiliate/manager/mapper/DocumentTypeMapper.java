@@ -5,6 +5,7 @@ import com.emssanareps.affiliate.manager.dto.response.DocumentTypeResponse;
 import com.emssanareps.affiliate.manager.model.DocumentType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -16,5 +17,9 @@ public interface DocumentTypeMapper {
 
     DocumentTypeResponse toResponse(DocumentType documentType);
 
-    List<DocumentTypeResponse> toResponseList(List<DocumentType> documentTypeList);
+    List<DocumentTypeResponse> toResponseList(List<DocumentType> documentTypePage);
+
+    default Page<DocumentTypeResponse> toResponsePage(Page<DocumentType> documentTypePage) {
+        return documentTypePage.map(this::toResponse);
+    }
 }
