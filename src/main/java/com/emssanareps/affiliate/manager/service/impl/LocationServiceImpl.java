@@ -29,4 +29,21 @@ public class LocationServiceImpl implements LocationService {
 
         throw new IllegalArgumentException("Ha ocurrido un error con la direccion");
     }
+
+    @Override
+    public Location modify(Long locationId, LocationRequest locationRequest) {
+        if (daneService.validateDaneCodes(locationRequest)) {
+
+            Location old = locationRepository.findById(locationId).orElseThrow(
+                    () -> new IllegalArgumentException("Error al buscar la direccion")
+            );
+
+            Location updatedLocation = locationMapper.toEntity(locationRequest);
+            updatedLocation.setId(old.getId());
+
+            return locationRepository.save(updatedLocation);
+        }
+
+        throw new IllegalArgumentException("Ha ocurrido un error con la direccion");
+    }
 }

@@ -5,4 +5,8 @@ import com.emssanareps.affiliate.manager.model.Location;
 
 public interface LocationService {
     Location create(LocationRequest locationRequest);
+
+    Location modify(Long locationId, LocationRequest locationRequest);
+
+
 }

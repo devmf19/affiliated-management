@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class DocumentTypeRequest {
-    private String name;
-    private String description;
+public class NameOrLastnameRequest {
+    private String name = "";
+    private String lastname = "";
 }

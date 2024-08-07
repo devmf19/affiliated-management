@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class AffiliateContactResponse {
-    private Long id;
     private String contactType;
     private String contact;
 }

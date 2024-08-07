@@ -18,5 +18,8 @@ public class BeneficiaryRequest {
     private LocalDate birthdate;
     private LocalDate affiliation_date;
     private String genre;
+    private String status;
+    private String documentType;
+    private String beneficiaryType;
     private LocationRequest location;
 }

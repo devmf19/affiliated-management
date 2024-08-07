@@ -5,6 +5,7 @@ import com.emssanareps.affiliate.manager.dto.response.AffiliateResponse;
 import com.emssanareps.affiliate.manager.model.Affiliate;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -30,4 +31,8 @@ public interface AffiliateMapper {
     AffiliateResponse toResponse(Affiliate affiliate);
 
     List<AffiliateResponse> toResponseList(List<Affiliate> affiliateList);
+
+    default Page<AffiliateResponse> toResponsePage(Page<Affiliate> affiliatePage) {
+        return affiliatePage.map(this::toResponse);
+    }
 }

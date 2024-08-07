@@ -1,8 +1,6 @@
 package com.emssanareps.affiliate.manager.model;
 
-import com.emssanareps.affiliate.manager.enums.CivilStatus;
-import com.emssanareps.affiliate.manager.enums.Genre;
-import com.emssanareps.affiliate.manager.enums.Status;
+import com.emssanareps.affiliate.manager.enums.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,12 +44,12 @@ public class Beneficiary {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToOne
-    @JoinColumn(name = "document_type_id", nullable = false)
+    @Column(name = "document_type", nullable = false)
+    @Enumerated(EnumType.STRING)
     private DocumentType documentType;
 
-    @ManyToOne
-    @JoinColumn(name = "beneficiary_type_id", nullable = false)
+    @Column(name = "beneficiary_type", nullable = false)
+    @Enumerated(EnumType.STRING)
     private BeneficiaryType beneficiaryType;
 
     @ManyToOne

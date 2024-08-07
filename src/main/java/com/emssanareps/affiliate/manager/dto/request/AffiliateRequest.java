@@ -20,6 +20,8 @@ public class AffiliateRequest {
     private String genre;
     private String civilStatus;
     private String regime;
+    private String status;
+    private String documentType;
     private LocationRequest location;
     private List<AffiliateContactRequest> contacts;
     private List<BeneficiaryRequest> beneficiaries;

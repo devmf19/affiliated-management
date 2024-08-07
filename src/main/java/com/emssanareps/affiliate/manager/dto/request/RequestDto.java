@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class RequestDto <T>{
-    private int pageNumber;
-    private int rowsNumber;
+    private int pageNumber = 1;
+    private int rowsNumber = 10;
     private T data;
 }
