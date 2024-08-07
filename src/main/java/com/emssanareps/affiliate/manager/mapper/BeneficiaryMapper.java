@@ -11,7 +11,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {LocationMapper.class})
+@Mapper(componentModel = "spring", uses = {LocationMapper.class, EnumsMapper.class})
 public interface BeneficiaryMapper {
 
     @Mapping(target = "id", ignore = true)
@@ -23,10 +23,6 @@ public interface BeneficiaryMapper {
     @Mapping(target = "location", ignore = true)
     Beneficiary toEntity(BeneficiaryRequest beneficiaryRequest);
 
-    @Mapping(target = "documentType", expression = "java(beneficiary.getDocumentType.name())")
-    @Mapping(target = "beneficiaryType", expression = "java(beneficiary.getBeneficiary.name())")
-    @Mapping(target = "genre",expression = "java(beneficiary.getGenre.name())")
-    @Mapping(target = "status", expression = "java(beneficiary.getStatus.name())")
     BeneficiaryResponse toResponse(Beneficiary beneficiary);
 
     List<BeneficiaryResponse> toResponseList(List<Beneficiary> beneficiaryList);

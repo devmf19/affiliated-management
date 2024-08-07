@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {LocationMapper.class, BeneficiaryMapper.class})
+@Mapper(componentModel = "spring", uses = {EnumsMapper.class})
 public interface AffiliateMapper {
 
     @Mapping(target = "id", ignore = true)
@@ -23,11 +23,6 @@ public interface AffiliateMapper {
     @Mapping(target = "contacts", ignore = true)
     Affiliate toEntity(AffiliateRequest affiliateRequest);
 
-    @Mapping(target = "documentType", expression = "java(affiliate.getDocumentType.name())")
-    @Mapping(target = "genre",expression = "java(affiliate.getGenre.name())")
-    @Mapping(target = "civilStatus", expression = "java(affiliate.getCivilStatus.name())")
-    @Mapping(target = "regime", expression = "java(affiliate.getRegime.name())")
-    @Mapping(target = "status", expression = "java(affiliate.getStatus.name())")
     AffiliateResponse toResponse(Affiliate affiliate);
 
     List<AffiliateResponse> toResponseList(List<Affiliate> affiliateList);

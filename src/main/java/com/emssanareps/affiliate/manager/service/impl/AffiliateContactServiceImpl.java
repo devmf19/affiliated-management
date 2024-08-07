@@ -7,6 +7,7 @@ import com.emssanareps.affiliate.manager.mapper.AffiliateContactMapper;
 import com.emssanareps.affiliate.manager.model.AffiliateContact;
 import com.emssanareps.affiliate.manager.repository.AffiliateContactRepository;
 import com.emssanareps.affiliate.manager.service.AffiliateContactService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ public class AffiliateContactServiceImpl implements AffiliateContactService {
     }
 
     @Override
+    @Transactional
     public AffiliateContactResponse create(Long affiliateId, AffiliateContactRequest affiliateContactRequest) {
         AffiliateContact toSave = affiliateContactMapper.toEntity(affiliateContactRequest);
         toSave.setContactType(ContactType.fromValue(affiliateContactRequest.getContactType()));

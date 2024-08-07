@@ -33,7 +33,7 @@ public class Affiliate {
     private LocalDate birthdate;
 
     @Column(name = "affiliation_date", nullable = false)
-    private LocalDate affiliation_date;
+    private LocalDate affiliationDate = LocalDate.now();
 
     @Column(name = "genre", nullable = false)
     @Enumerated(EnumType.STRING)

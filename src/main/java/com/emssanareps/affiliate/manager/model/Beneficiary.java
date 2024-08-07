@@ -34,7 +34,7 @@ public class Beneficiary {
     private LocalDate birthdate;
 
     @Column(name = "affiliation_date", nullable = false)
-    private LocalDate affiliation_date;
+    private LocalDate affiliationDate;
 
     @Column(name = "genre", nullable = false)
     @Enumerated(EnumType.STRING)

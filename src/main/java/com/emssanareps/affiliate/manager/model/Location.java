@@ -21,9 +21,9 @@ public class Location {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "dane_municipality_id", nullable = false)
-    private Long DaneMunicipalityId;
+    @Column(name = "dane_municipality_code", nullable = false)
+    private Long DaneMunicipalityCode;
 
-    @Column(name = "dane_department_id", nullable = false)
-    private Long DaneDepartmentId;
+    @Column(name = "dane_department_code", nullable = false)
+    private Long DaneDepartmentCode;
 }

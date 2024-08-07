@@ -1,11 +1,13 @@
 package com.emssanareps.affiliate.manager.service.impl;
 
+import com.emssanareps.affiliate.manager.constants.LocationConstants;
 import com.emssanareps.affiliate.manager.dto.request.LocationRequest;
 import com.emssanareps.affiliate.manager.mapper.LocationMapper;
 import com.emssanareps.affiliate.manager.model.Location;
 import com.emssanareps.affiliate.manager.repository.LocationRepository;
 import com.emssanareps.affiliate.manager.service.DaneService;
 import com.emssanareps.affiliate.manager.service.LocationService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,19 +25,21 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
+    @Transactional
     public Location create(LocationRequest locationRequest) {
         if (daneService.validateDaneCodes(locationRequest))
             return locationRepository.save(locationMapper.toEntity(locationRequest));
 
-        throw new IllegalArgumentException("Ha ocurrido un error con la direccion");
+        throw new IllegalArgumentException(LocationConstants.ADDRESS_ERROR);
     }
 
     @Override
+    @Transactional
     public Location modify(Long locationId, LocationRequest locationRequest) {
         if (daneService.validateDaneCodes(locationRequest)) {
 
             Location old = locationRepository.findById(locationId).orElseThrow(
-                    () -> new IllegalArgumentException("Error al buscar la direccion")
+                    () -> new IllegalArgumentException(LocationConstants.SEARCH_ERROR)
             );
 
             Location updatedLocation = locationMapper.toEntity(locationRequest);
@@ -44,6 +48,6 @@ public class LocationServiceImpl implements LocationService {
             return locationRepository.save(updatedLocation);
         }
 
-        throw new IllegalArgumentException("Ha ocurrido un error con la direccion");
+        throw new IllegalArgumentException(LocationConstants.ADDRESS_ERROR);
     }
 }

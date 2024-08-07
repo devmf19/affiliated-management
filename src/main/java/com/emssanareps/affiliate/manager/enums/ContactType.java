@@ -8,12 +8,8 @@ import java.util.Arrays;
 @Getter
 public enum ContactType {
     CELULAR("CELULAR"),
-    CELULAR2("CELULAR2"),
-    CORREO("CORREOL"),
-    CORREO2("CORREO"),
-    TELEFONO("TELEFONO"),
-    TELEFONO2("TELEFONO2")
-    ;
+    CORREO("CORREO"),
+    TELEFONO("TELEFONO");
 
     private final String name;
 

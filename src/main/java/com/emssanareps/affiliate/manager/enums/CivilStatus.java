@@ -7,8 +7,8 @@ import java.util.Arrays;
 
 @Getter
 public enum CivilStatus {
-    SOLTERO("FEMENINO"),
-    CASADO("MASCULINO"),
+    SOLTERO("SOLTERO(A)"),
+    CASADO("CASAD(A)"),
     UNION_LIBRE("UNION LIBRE");
 
     private final String name;

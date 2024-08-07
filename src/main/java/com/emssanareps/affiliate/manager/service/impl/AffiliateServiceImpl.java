@@ -1,5 +1,6 @@
 package com.emssanareps.affiliate.manager.service.impl;
 
+import com.emssanareps.affiliate.manager.constants.AffiliateConstants;
 import com.emssanareps.affiliate.manager.dto.request.AffiliateRequest;
 import com.emssanareps.affiliate.manager.dto.request.NameOrLastnameRequest;
 import com.emssanareps.affiliate.manager.dto.request.RequestDto;
@@ -13,14 +14,13 @@ import com.emssanareps.affiliate.manager.service.AffiliateContactService;
 import com.emssanareps.affiliate.manager.service.AffiliateService;
 import com.emssanareps.affiliate.manager.service.BeneficiaryService;
 import com.emssanareps.affiliate.manager.service.LocationService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class AffiliateServiceImpl implements AffiliateService {
@@ -45,7 +45,7 @@ public class AffiliateServiceImpl implements AffiliateService {
     public AffiliateResponse create(AffiliateRequest affiliateRequest) {
 
         if (affiliateRepository.existsByIdentificationNumber(affiliateRequest.getIdentificationNumber()))
-            throw new IllegalArgumentException("el numero de identidad ".concat(affiliateRequest.getIdentificationNumber().toString()).concat(" ya se encuentra registrado"));
+            throw new IllegalArgumentException(AffiliateConstants.REPEATED_IDENTIFICATION_NUMBER.concat(affiliateRequest.getIdentificationNumber().toString()));
 
 
         Location location = locationService.create(affiliateRequest.getLocation());
@@ -87,7 +87,7 @@ public class AffiliateServiceImpl implements AffiliateService {
         return affiliateRepository.findById(affiliateId)
                 .map(affiliateMapper::toResponse)
                 .orElseThrow(
-                        () -> new IllegalArgumentException("No se ha encontrado un afilido con id ".concat(affiliateId.toString()))
+                        () -> new EntityNotFoundException(AffiliateConstants.NOT_FOUND.concat(affiliateId.toString()))
                 );
     }
 
@@ -95,7 +95,7 @@ public class AffiliateServiceImpl implements AffiliateService {
     public AffiliateResponse modify(Long affiliateId, AffiliateRequest affiliateRequest) {
         Affiliate old = affiliateRepository.findById(affiliateId)
                 .orElseThrow(
-                        () -> new IllegalArgumentException("No se ha encontrado un afilido con id ".concat(affiliateId.toString()))
+                        () -> new EntityNotFoundException(AffiliateConstants.NOT_FOUND.concat(affiliateId.toString()))
                 );
 
         Affiliate toUpdate = affiliateMapper.toEntity(affiliateRequest);
@@ -106,6 +106,8 @@ public class AffiliateServiceImpl implements AffiliateService {
         toUpdate.setLocation(location);
         toUpdate.setGenre(Genre.fromValue(affiliateRequest.getGenre()));
         toUpdate.setStatus(Status.fromValue(affiliateRequest.getStatus()));
+        toUpdate.setBeneficiaries(old.getBeneficiaries());
+        toUpdate.setContacts(old.getContacts());
 
         return affiliateMapper.toResponse(
                 affiliateRepository.save(toUpdate)
@@ -117,7 +119,7 @@ public class AffiliateServiceImpl implements AffiliateService {
         affiliateRepository.delete(
                 affiliateRepository.findById(affiliateId)
                         .orElseThrow(
-                                () -> new IllegalArgumentException("No se ha encontrado un afilido con id ".concat(affiliateId.toString()))
+                                () -> new EntityNotFoundException(AffiliateConstants.NOT_FOUND.concat(affiliateId.toString()))
                         )
         );
     }

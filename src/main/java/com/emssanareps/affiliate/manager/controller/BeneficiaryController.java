@@ -1,11 +1,13 @@
 package com.emssanareps.affiliate.manager.controller;
 
+import com.emssanareps.affiliate.manager.constants.BeneficiaryConstants;
 import com.emssanareps.affiliate.manager.dto.request.BeneficiaryRequest;
 import com.emssanareps.affiliate.manager.dto.request.NameOrLastnameRequest;
 import com.emssanareps.affiliate.manager.dto.request.RequestDto;
 import com.emssanareps.affiliate.manager.dto.response.BeneficiaryResponse;
 import com.emssanareps.affiliate.manager.dto.response.ResponseDto;
 import com.emssanareps.affiliate.manager.service.BeneficiaryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -24,12 +26,12 @@ public class BeneficiaryController {
 
     @PostMapping("/create/{affiliateId}")
     public ResponseEntity<ResponseDto<BeneficiaryResponse>> create(@PathVariable("affiliateId") Long affiliateId,
-                                                                   @RequestBody BeneficiaryRequest beneficiaryRequest) {
+                                                                   @Valid @RequestBody BeneficiaryRequest beneficiaryRequest) {
         return new ResponseEntity<>(
                 ResponseDto.<BeneficiaryResponse>builder()
                         .data(beneficiaryService.create(affiliateId, beneficiaryRequest))
                         .status(HttpStatus.CREATED)
-                        .message("Registro exitoso")
+                        .message(BeneficiaryConstants.SUCCESS_REGISTER)
                         .build(),
                 HttpStatus.CREATED
         );
@@ -41,7 +43,7 @@ public class BeneficiaryController {
                 ResponseDto.<Page<BeneficiaryResponse>>builder()
                         .data(beneficiaryService.readAll(requestDto))
                         .status(HttpStatus.OK)
-                        .message("Operacion exitosa")
+                        .message(BeneficiaryConstants.SUCCESS_OPERATION)
                         .build(),
                 HttpStatus.OK
         );
@@ -53,7 +55,7 @@ public class BeneficiaryController {
                 ResponseDto.<BeneficiaryResponse>builder()
                         .data(beneficiaryService.readById(beneficiaryId))
                         .status(HttpStatus.OK)
-                        .message("Operacion exitosa")
+                        .message(BeneficiaryConstants.SUCCESS_OPERATION)
                         .build(),
                 HttpStatus.OK
         );
@@ -61,12 +63,12 @@ public class BeneficiaryController {
 
     @PutMapping("/u/{beneficiaryId}")
     public ResponseEntity<ResponseDto<BeneficiaryResponse>> modify(@PathVariable("beneficiaryId") Long beneficiaryId,
-                                                                 @RequestBody BeneficiaryRequest beneficiaryRequest) {
+                                                                   @Valid @RequestBody BeneficiaryRequest beneficiaryRequest) {
         return new ResponseEntity<>(
                 ResponseDto.<BeneficiaryResponse>builder()
                         .data(beneficiaryService.modify(beneficiaryId, beneficiaryRequest))
                         .status(HttpStatus.OK)
-                        .message("Modicicacion exitosa")
+                        .message(BeneficiaryConstants.SUCCESS_MODIFY)
                         .build(),
                 HttpStatus.OK
         );
@@ -77,8 +79,8 @@ public class BeneficiaryController {
         beneficiaryService.remove(beneficiaryId);
         return new ResponseEntity<>(
                 ResponseDto.<String>builder()
-                        .data("Afiliado eliminado")
-                        .message("Operacion existosa")
+                        .data(BeneficiaryConstants.DELETED)
+                        .message(BeneficiaryConstants.SUCCESS_MODIFY)
                         .status(HttpStatus.OK)
                         .build(),
                 HttpStatus.OK
@@ -86,11 +88,11 @@ public class BeneficiaryController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<ResponseDto<Page<BeneficiaryResponse>>> searchNameOrDescription(RequestDto<NameOrLastnameRequest> requestDto) {
+    public ResponseEntity<ResponseDto<Page<BeneficiaryResponse>>> searchNameOrDescription(@RequestBody RequestDto<NameOrLastnameRequest> requestDto) {
         return new ResponseEntity<>(
                 ResponseDto.<Page<BeneficiaryResponse>>builder()
                         .data(beneficiaryService.searchNameOrDescription(requestDto))
-                        .message("Resultados de búsqueda")
+                        .message(BeneficiaryConstants.SEARCH_RESULTS)
                         .status(HttpStatus.OK)
                         .build(),
                 HttpStatus.OK

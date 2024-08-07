@@ -1,5 +1,6 @@
 package com.emssanareps.affiliate.manager.service.impl;
 
+import com.emssanareps.affiliate.manager.constants.BeneficiaryConstants;
 import com.emssanareps.affiliate.manager.dto.request.BeneficiaryRequest;
 import com.emssanareps.affiliate.manager.dto.request.NameOrLastnameRequest;
 import com.emssanareps.affiliate.manager.dto.request.RequestDto;
@@ -14,12 +15,17 @@ import com.emssanareps.affiliate.manager.model.Location;
 import com.emssanareps.affiliate.manager.repository.BeneficiaryRepository;
 import com.emssanareps.affiliate.manager.service.BeneficiaryService;
 import com.emssanareps.affiliate.manager.service.LocationService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.Optional;
 
 @Service
 public class BeneficiaryServiceImpl implements BeneficiaryService {
@@ -38,14 +44,14 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     @Transactional
     public BeneficiaryResponse create(Long affiliateId, BeneficiaryRequest beneficiaryRequest) {
         if (beneficiaryRepository.existsByIdentificationNumber(beneficiaryRequest.getIdentificationNumber()))
-            throw new IllegalArgumentException("Ha ocurrido un error con el beneficiario ".concat(beneficiaryRequest.getName()));
+            throw new IllegalArgumentException(BeneficiaryConstants.REPEATED_IDENTIFICATION_NUMBER.concat(beneficiaryRequest.getName()));
 
+        ageValidation(beneficiaryRequest);
 
         Location location = locationService.create(beneficiaryRequest.getLocation());
-
         Beneficiary toSave = beneficiaryMapper.toEntity(beneficiaryRequest);
 
-        toSave.setDocumentType(DocumentType.fromValue(beneficiaryRequest.getBeneficiaryType()));
+        toSave.setDocumentType(DocumentType.fromValue(beneficiaryRequest.getDocumentType()));
         toSave.setBeneficiaryType(BeneficiaryType.fromValue(beneficiaryRequest.getBeneficiaryType()));
         toSave.setLocation(location);
         toSave.setGenre(Genre.fromValue(beneficiaryRequest.getGenre()));
@@ -66,7 +72,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         return beneficiaryRepository.findById(beneficiaryId)
                 .map(beneficiaryMapper::toResponse)
                 .orElseThrow(
-                        () -> new IllegalArgumentException("No se ha encontrado un beneficiario con id ".concat(beneficiaryId.toString()))
+                        () -> new EntityNotFoundException(BeneficiaryConstants.NOT_FOUND.concat(beneficiaryId.toString()))
                 );
     }
 
@@ -75,11 +81,12 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     public BeneficiaryResponse modify(Long beneficiaryId, BeneficiaryRequest beneficiaryRequest) {
         Beneficiary old = beneficiaryRepository.findById(beneficiaryId)
                 .orElseThrow(
-                        () -> new IllegalArgumentException("No se ha encontrado un beneficiario con id ".concat(beneficiaryId.toString()))
+                        () -> new EntityNotFoundException(BeneficiaryConstants.NOT_FOUND.concat(beneficiaryId.toString()))
                 );
 
-        Beneficiary toUpdate = beneficiaryMapper.toEntity(beneficiaryRequest);
+        ageValidation(beneficiaryRequest);
 
+        Beneficiary toUpdate = beneficiaryMapper.toEntity(beneficiaryRequest);
         Location location = locationService.modify(old.getLocation().getId(), beneficiaryRequest.getLocation());
 
         toUpdate.setDocumentType(DocumentType.fromValue(beneficiaryRequest.getDocumentType()));
@@ -98,7 +105,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         beneficiaryRepository.delete(
                 beneficiaryRepository.findById(beneficiaryId)
                         .orElseThrow(
-                                () -> new IllegalArgumentException("No se ha encontrado un beneficiario con id ".concat(beneficiaryId.toString()))
+                                () -> new EntityNotFoundException(BeneficiaryConstants.NOT_FOUND.concat(beneficiaryId.toString()))
                         )
         );
     }
@@ -113,5 +120,15 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
                         pageable
                 )
         );
+    }
+
+    private void ageValidation(BeneficiaryRequest beneficiaryRequest){
+        Optional.of(beneficiaryRequest)
+                .filter(request -> BeneficiaryType.HIJX.equals(BeneficiaryType.fromValue(request.getBeneficiaryType())))
+                .map(request -> Period.between(request.getBirthdate(), LocalDate.now()).getYears())
+                .filter(age -> age >= 18)
+                .ifPresent(age -> {
+                    throw new IllegalArgumentException(BeneficiaryConstants.AGE_ERROR);
+                });
     }
 }

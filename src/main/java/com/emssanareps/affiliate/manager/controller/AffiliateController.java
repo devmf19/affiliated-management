@@ -1,11 +1,13 @@
 package com.emssanareps.affiliate.manager.controller;
 
+import com.emssanareps.affiliate.manager.constants.AffiliateConstants;
 import com.emssanareps.affiliate.manager.dto.request.AffiliateRequest;
 import com.emssanareps.affiliate.manager.dto.request.NameOrLastnameRequest;
 import com.emssanareps.affiliate.manager.dto.request.RequestDto;
 import com.emssanareps.affiliate.manager.dto.response.AffiliateResponse;
 import com.emssanareps.affiliate.manager.dto.response.ResponseDto;
 import com.emssanareps.affiliate.manager.service.AffiliateService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -24,12 +26,12 @@ public class AffiliateController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseDto<AffiliateResponse>> create(@RequestBody AffiliateRequest affiliateRequest) {
+    public ResponseEntity<ResponseDto<AffiliateResponse>> create(@Valid @RequestBody AffiliateRequest affiliateRequest) {
         return new ResponseEntity<>(
                 ResponseDto.<AffiliateResponse>builder()
                         .data(affiliateService.create(affiliateRequest))
                         .status(HttpStatus.CREATED)
-                        .message("Registro exitoso")
+                        .message(AffiliateConstants.SUCCESS_REGISTER)
                         .build(),
                 HttpStatus.CREATED
         );
@@ -41,7 +43,7 @@ public class AffiliateController {
                 ResponseDto.<Page<AffiliateResponse>>builder()
                         .data(affiliateService.readAll(requestDto))
                         .status(HttpStatus.OK)
-                        .message("Operacion exitosa")
+                        .message(AffiliateConstants.SUCCESS_OPERATION)
                         .build(),
                 HttpStatus.OK
         );
@@ -53,7 +55,7 @@ public class AffiliateController {
                 ResponseDto.<AffiliateResponse>builder()
                         .data(affiliateService.readById(affiliateId))
                         .status(HttpStatus.OK)
-                        .message("Operacion exitosa")
+                        .message(AffiliateConstants.SUCCESS_OPERATION)
                         .build(),
                 HttpStatus.OK
         );
@@ -61,12 +63,12 @@ public class AffiliateController {
 
     @PutMapping("/u/{affiliateId}")
     public ResponseEntity<ResponseDto<AffiliateResponse>> modify(@PathVariable("affiliateId") Long affiliateId,
-                                                                       @RequestBody AffiliateRequest affiliateRequest) {
+                                                                 @Valid @RequestBody AffiliateRequest affiliateRequest) {
         return new ResponseEntity<>(
                 ResponseDto.<AffiliateResponse>builder()
                         .data(affiliateService.modify(affiliateId, affiliateRequest))
                         .status(HttpStatus.OK)
-                        .message("Modicicacion exitosa")
+                        .message(AffiliateConstants.SUCCESS_MODIFY)
                         .build(),
                 HttpStatus.OK
         );
@@ -77,8 +79,8 @@ public class AffiliateController {
         affiliateService.remove(affiliateId);
         return new ResponseEntity<>(
                 ResponseDto.<String>builder()
-                        .data("Afiliado eliminado")
-                        .message("Operacion existosa")
+                        .data(AffiliateConstants.DELETED)
+                        .message(AffiliateConstants.SUCCESS_OPERATION)
                         .status(HttpStatus.OK)
                         .build(),
                 HttpStatus.OK
@@ -86,11 +88,11 @@ public class AffiliateController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<ResponseDto<Page<AffiliateResponse>>> searchNameOrDescription(RequestDto<NameOrLastnameRequest> requestDto) {
+    public ResponseEntity<ResponseDto<Page<AffiliateResponse>>> searchNameOrDescription(@RequestBody RequestDto<NameOrLastnameRequest> requestDto) {
         return new ResponseEntity<>(
                 ResponseDto.<Page<AffiliateResponse>>builder()
                         .data(affiliateService.searchNameOrDescription(requestDto))
-                        .message("Resultados de búsqueda")
+                        .message(AffiliateConstants.SEARCH_RESULTS)
                         .status(HttpStatus.OK)
                         .build(),
                 HttpStatus.OK
