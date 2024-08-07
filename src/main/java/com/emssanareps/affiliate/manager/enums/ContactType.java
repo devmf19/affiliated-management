@@ -1,6 +1,7 @@
 package com.emssanareps.affiliate.manager.enums;
 
 import lombok.Getter;
+import org.mapstruct.Named;
 
 import java.util.Arrays;
 
@@ -18,10 +19,6 @@ public enum ContactType {
 
     ContactType(String name) {
         this.name = name;
-    }
-
-    public String mapContactType(Regime regime) {
-        return regime != null ? regime.getName() : null;
     }
 
     public static ContactType fromValue(String value) {

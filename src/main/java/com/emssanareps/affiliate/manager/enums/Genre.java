@@ -1,6 +1,7 @@
 package com.emssanareps.affiliate.manager.enums;
 
 import lombok.Getter;
+import org.mapstruct.Named;
 
 import java.util.Arrays;
 
@@ -13,10 +14,6 @@ public enum Genre {
 
     Genre(String name) {
         this.name = name;
-    }
-
-    public String mapGenre(Genre genre) {
-        return genre != null ? genre.getName() : null;
     }
 
     public static Genre fromValue(String value) {

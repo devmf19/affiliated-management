@@ -1,6 +1,7 @@
 package com.emssanareps.affiliate.manager.enums;
 
 import lombok.Getter;
+import org.mapstruct.Named;
 
 import java.util.Arrays;
 
@@ -13,10 +14,6 @@ public enum Regime {
 
     Regime(String name) {
         this.name = name;
-    }
-
-    public String mapGenre(Regime regime) {
-        return regime != null ? regime.getName() : null;
     }
 
     public static Regime fromValue(String value) {

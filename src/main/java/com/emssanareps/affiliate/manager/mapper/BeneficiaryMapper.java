@@ -23,10 +23,10 @@ public interface BeneficiaryMapper {
     @Mapping(target = "location", ignore = true)
     Beneficiary toEntity(BeneficiaryRequest beneficiaryRequest);
 
-    @Mapping(target = "beneficiaryType", source = "beneficiaryType.name")
-    @Mapping(target = "documentType", source = "documentType.name")
-    @Mapping(target = "genre", source = "genre", qualifiedByName = "mapGenre")
-    @Mapping(target = "status", source = "status", qualifiedByName = "mapStatus")
+    @Mapping(target = "documentType", expression = "java(beneficiary.getDocumentType.name())")
+    @Mapping(target = "beneficiaryType", expression = "java(beneficiary.getBeneficiary.name())")
+    @Mapping(target = "genre",expression = "java(beneficiary.getGenre.name())")
+    @Mapping(target = "status", expression = "java(beneficiary.getStatus.name())")
     BeneficiaryResponse toResponse(Beneficiary beneficiary);
 
     List<BeneficiaryResponse> toResponseList(List<Beneficiary> beneficiaryList);

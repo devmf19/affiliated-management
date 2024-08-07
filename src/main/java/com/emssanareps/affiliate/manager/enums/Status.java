@@ -1,6 +1,7 @@
 package com.emssanareps.affiliate.manager.enums;
 
 import lombok.Getter;
+import org.mapstruct.Named;
 
 import java.util.Arrays;
 
@@ -13,10 +14,6 @@ public enum Status {
 
     Status(String name) {
         this.name = name;
-    }
-
-    String mapStatus(Status status) {
-        return status != null ? status.getName() : null;
     }
 
     public static Status fromValue(String value) {

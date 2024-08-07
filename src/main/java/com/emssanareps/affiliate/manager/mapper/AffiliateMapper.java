@@ -23,11 +23,11 @@ public interface AffiliateMapper {
     @Mapping(target = "contacts", ignore = true)
     Affiliate toEntity(AffiliateRequest affiliateRequest);
 
-    @Mapping(target = "documentType", source = "documentType.name")
-    @Mapping(target = "genre", source = "genre", qualifiedByName = "mapGenre")
-    @Mapping(target = "civilStatus", source = "civilStatus", qualifiedByName = "mapCivilStatus")
-    @Mapping(target = "regime", source = "regime", qualifiedByName = "mapRegime")
-    @Mapping(target = "status", source = "status", qualifiedByName = "mapStatus")
+    @Mapping(target = "documentType", expression = "java(affiliate.getDocumentType.name())")
+    @Mapping(target = "genre",expression = "java(affiliate.getGenre.name())")
+    @Mapping(target = "civilStatus", expression = "java(affiliate.getCivilStatus.name())")
+    @Mapping(target = "regime", expression = "java(affiliate.getRegime.name())")
+    @Mapping(target = "status", expression = "java(affiliate.getStatus.name())")
     AffiliateResponse toResponse(Affiliate affiliate);
 
     List<AffiliateResponse> toResponseList(List<Affiliate> affiliateList);

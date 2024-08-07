@@ -1,6 +1,7 @@
 package com.emssanareps.affiliate.manager.enums;
 
 import lombok.Getter;
+import org.mapstruct.Named;
 
 import java.util.Arrays;
 
@@ -13,10 +14,6 @@ public enum BeneficiaryType {
 
     BeneficiaryType(String name) {
         this.name = name;
-    }
-
-    public String mapBeneficiaryType(Regime regime) {
-        return regime != null ? regime.getName() : null;
     }
 
     public static BeneficiaryType fromValue(String value) {

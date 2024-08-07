@@ -15,7 +15,7 @@ public interface AffiliateContactMapper {
     @Mapping(target = "contactType", ignore = true)
     AffiliateContact toEntity (AffiliateContactRequest affiliateContactRequest);
 
-    @Mapping(target = "contactType", source = "conctatType.name")
+    @Mapping(target = "contactType", expression = "java(affiliateContact.getContactType.name())")
     AffiliateContactResponse toResponse(AffiliateContact affiliateContact);
 
     List<AffiliateContactResponse> toResponseList(List<AffiliateContact> affiliateContactList);

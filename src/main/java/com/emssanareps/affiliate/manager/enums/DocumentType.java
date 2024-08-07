@@ -1,6 +1,7 @@
 package com.emssanareps.affiliate.manager.enums;
 
 import lombok.Getter;
+import org.mapstruct.Named;
 
 import java.util.Arrays;
 
@@ -16,10 +17,6 @@ public enum DocumentType {
 
     DocumentType(String name) {
         this.name = name;
-    }
-
-    public String mapDocumentType(Regime regime) {
-        return regime != null ? regime.getName() : null;
     }
 
     public static DocumentType fromValue(String value) {
