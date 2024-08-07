@@ -2,6 +2,7 @@ package com.emssanareps.affiliate.manager.dto.request;
 
 import com.emssanareps.affiliate.manager.constants.AffiliateConstants;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class AffiliateRequest {
     
-    @NotBlank(message = AffiliateConstants.REQUIRED_IDENTIFICATION_NUMBER)
+    @NotNull(message = AffiliateConstants.REQUIRED_IDENTIFICATION_NUMBER)
     private Long identificationNumber;
 
     @NotBlank(message = AffiliateConstants.REQUIRED_NAME)
@@ -23,10 +24,10 @@ public class AffiliateRequest {
     @NotBlank(message = AffiliateConstants.REQUIRED_LASTNAME)
     private String lastname;
 
-    @NotBlank(message = AffiliateConstants.REQUIRED_BIRTHDATE)
+    @NotNull(message = AffiliateConstants.REQUIRED_BIRTHDATE)
     private LocalDate birthdate;
 
-    @NotBlank(message = AffiliateConstants.REQUIRED_AFFILIATION_DATE)
+    @NotNull(message = AffiliateConstants.REQUIRED_AFFILIATION_DATE)
     private LocalDate affiliationDate;
 
     @NotBlank(message = AffiliateConstants.REQUIRED_GENRE)
@@ -43,7 +44,7 @@ public class AffiliateRequest {
     @NotBlank(message = AffiliateConstants.REQUIRED_DOCUMENT_TYPE)
     private String documentType;
 
-    @NotBlank(message = AffiliateConstants.REQUIRED_LOCATION)
+    @NotNull(message = AffiliateConstants.REQUIRED_LOCATION)
     private LocationRequest location;
 
     private List<AffiliateContactRequest> contacts;

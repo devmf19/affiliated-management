@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,7 +27,7 @@ public class AffiliateController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseDto<AffiliateResponse>> create(@Valid @RequestBody AffiliateRequest affiliateRequest) {
+    public ResponseEntity<ResponseDto<AffiliateResponse>> create(@Validated @RequestBody AffiliateRequest affiliateRequest) {
         return new ResponseEntity<>(
                 ResponseDto.<AffiliateResponse>builder()
                         .data(affiliateService.create(affiliateRequest))
@@ -63,7 +64,7 @@ public class AffiliateController {
 
     @PutMapping("/u/{affiliateId}")
     public ResponseEntity<ResponseDto<AffiliateResponse>> modify(@PathVariable("affiliateId") Long affiliateId,
-                                                                 @Valid @RequestBody AffiliateRequest affiliateRequest) {
+                                                                 @Validated @RequestBody AffiliateRequest affiliateRequest) {
         return new ResponseEntity<>(
                 ResponseDto.<AffiliateResponse>builder()
                         .data(affiliateService.modify(affiliateId, affiliateRequest))

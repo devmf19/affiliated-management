@@ -2,6 +2,7 @@ package com.emssanareps.affiliate.manager.service;
 
 import com.emssanareps.affiliate.manager.dto.request.*;
 import com.emssanareps.affiliate.manager.dto.response.BeneficiaryResponse;
+import com.emssanareps.affiliate.manager.model.Beneficiary;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

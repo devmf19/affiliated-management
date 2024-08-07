@@ -4,6 +4,7 @@ import com.emssanareps.affiliate.manager.constants.BeneficiaryConstants;
 import com.emssanareps.affiliate.manager.dto.request.BeneficiaryRequest;
 import com.emssanareps.affiliate.manager.dto.request.NameOrLastnameRequest;
 import com.emssanareps.affiliate.manager.dto.request.RequestDto;
+import com.emssanareps.affiliate.manager.dto.response.AffiliateResponse;
 import com.emssanareps.affiliate.manager.dto.response.BeneficiaryResponse;
 import com.emssanareps.affiliate.manager.enums.BeneficiaryType;
 import com.emssanareps.affiliate.manager.enums.DocumentType;
@@ -14,7 +15,9 @@ import com.emssanareps.affiliate.manager.model.Beneficiary;
 import com.emssanareps.affiliate.manager.model.Location;
 import com.emssanareps.affiliate.manager.repository.BeneficiaryRepository;
 import com.emssanareps.affiliate.manager.service.BeneficiaryService;
+import com.emssanareps.affiliate.manager.service.DaneService;
 import com.emssanareps.affiliate.manager.service.LocationService;
+import com.emssanareps.affiliate.manager.util.DaneLocation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +34,14 @@ import java.util.Optional;
 public class BeneficiaryServiceImpl implements BeneficiaryService {
     private final BeneficiaryRepository beneficiaryRepository;
     private final LocationService locationService;
+    private final DaneService daneService;
     private final BeneficiaryMapper beneficiaryMapper;
 
     @Autowired
-    public BeneficiaryServiceImpl(BeneficiaryRepository beneficiaryRepository, LocationService locationService, BeneficiaryMapper beneficiaryMapper) {
+    public BeneficiaryServiceImpl(BeneficiaryRepository beneficiaryRepository, LocationService locationService, DaneService daneService, BeneficiaryMapper beneficiaryMapper) {
         this.beneficiaryRepository = beneficiaryRepository;
         this.locationService = locationService;
+        this.daneService = daneService;
         this.beneficiaryMapper = beneficiaryMapper;
     }
 
@@ -58,19 +63,20 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         toSave.setStatus(Status.ACTIVO);
         toSave.setAffiliateId(affiliateId);
 
-        return beneficiaryMapper.toResponse(beneficiaryRepository.save(toSave));
+        return mapLocation(beneficiaryRepository.save(toSave));
     }
 
     @Override
     public Page<BeneficiaryResponse> readAll(RequestDto<Object> requestDto) {
         Pageable pageable = PageRequest.of(requestDto.getPageNumber(), requestDto.getRowsNumber());
-        return beneficiaryMapper.toResponsePage(beneficiaryRepository.findAll(pageable));
+        return beneficiaryRepository.findAll(pageable)
+                .map(this::mapLocation);
     }
 
     @Override
     public BeneficiaryResponse readById(Long beneficiaryId) {
         return beneficiaryRepository.findById(beneficiaryId)
-                .map(beneficiaryMapper::toResponse)
+                .map(this::mapLocation)
                 .orElseThrow(
                         () -> new EntityNotFoundException(BeneficiaryConstants.NOT_FOUND.concat(beneficiaryId.toString()))
                 );
@@ -95,9 +101,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         toUpdate.setGenre(Genre.fromValue(beneficiaryRequest.getGenre()));
         toUpdate.setStatus(Status.fromValue(beneficiaryRequest.getStatus()));
 
-        return beneficiaryMapper.toResponse(
-                beneficiaryRepository.save(toUpdate)
-        );
+        return mapLocation(beneficiaryRepository.save(toUpdate));
     }
 
     @Override
@@ -113,16 +117,14 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     @Override
     public Page<BeneficiaryResponse> searchNameOrDescription(RequestDto<NameOrLastnameRequest> beneficiaryRequest) {
         Pageable pageable = PageRequest.of(beneficiaryRequest.getPageNumber(), beneficiaryRequest.getRowsNumber());
-        return beneficiaryMapper.toResponsePage(
-                beneficiaryRepository.findByNameContainingIgnoreCaseOrLastnameContainingIgnoreCase(
-                        beneficiaryRequest.getData().getName(),
-                        beneficiaryRequest.getData().getLastname(),
-                        pageable
-                )
-        );
+        return beneficiaryRepository.findByNameContainingIgnoreCaseOrLastnameContainingIgnoreCase(
+                beneficiaryRequest.getData().getName(),
+                beneficiaryRequest.getData().getLastname(),
+                pageable
+        ).map(this::mapLocation);
     }
 
-    private void ageValidation(BeneficiaryRequest beneficiaryRequest){
+    private void ageValidation(BeneficiaryRequest beneficiaryRequest) {
         Optional.of(beneficiaryRequest)
                 .filter(request -> BeneficiaryType.HIJX.equals(BeneficiaryType.fromValue(request.getBeneficiaryType())))
                 .map(request -> Period.between(request.getBirthdate(), LocalDate.now()).getYears())
@@ -130,5 +132,15 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
                 .ifPresent(age -> {
                     throw new IllegalArgumentException(BeneficiaryConstants.AGE_ERROR);
                 });
+    }
+
+    private BeneficiaryResponse mapLocation(Beneficiary beneficiary) {
+        DaneLocation daneLocation = daneService.findLocationByCodes(beneficiary.getLocation().getDaneDepartmentCode(), beneficiary.getLocation().getDaneMunicipalityCode());
+        BeneficiaryResponse beneficiaryResponse = beneficiaryMapper.toResponse(beneficiary);
+
+        beneficiaryResponse.getLocation().setDepartment(daneLocation.getDepartmentName());
+        beneficiaryResponse.getLocation().setMunicipality(daneLocation.getMunicipalityName());
+
+        return beneficiaryResponse;
     }
 }

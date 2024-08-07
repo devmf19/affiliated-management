@@ -2,6 +2,7 @@ package com.emssanareps.affiliate.manager.dto.request;
 
 import com.emssanareps.affiliate.manager.constants.BeneficiaryConstants;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class BeneficiaryRequest {
 
-    @NotBlank(message = BeneficiaryConstants.REQUIRED_IDENTIFICATION_NUMBER)
+    @NotNull(message = BeneficiaryConstants.REQUIRED_IDENTIFICATION_NUMBER)
     private Long identificationNumber;
 
     @NotBlank(message = BeneficiaryConstants.REQUIRED_NAME)
@@ -22,10 +23,10 @@ public class BeneficiaryRequest {
     @NotBlank(message = BeneficiaryConstants.REQUIRED_LASTNAME)
     private String lastname;
 
-    @NotBlank(message = BeneficiaryConstants.REQUIRED_BIRTHDATE)
+    @NotNull(message = BeneficiaryConstants.REQUIRED_BIRTHDATE)
     private LocalDate birthdate;
 
-    @NotBlank(message = BeneficiaryConstants.REQUIRED_AFFILIATION_DATE)
+    @NotNull(message = BeneficiaryConstants.REQUIRED_AFFILIATION_DATE)
     private LocalDate affiliationDate = LocalDate.now();
 
     @NotBlank(message = BeneficiaryConstants.REQUIRED_GENRE)
@@ -39,6 +40,6 @@ public class BeneficiaryRequest {
     @NotBlank(message = BeneficiaryConstants.REQUIRED_BENEFICIARY_TYPE)
     private String beneficiaryType;
 
-    @NotBlank(message = BeneficiaryConstants.REQUIRED_LOCATION)
+    @NotNull(message = BeneficiaryConstants.REQUIRED_LOCATION)
     private LocationRequest location;
 }

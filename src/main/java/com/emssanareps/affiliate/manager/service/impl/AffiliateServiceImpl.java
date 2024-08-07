@@ -10,10 +10,8 @@ import com.emssanareps.affiliate.manager.mapper.AffiliateMapper;
 import com.emssanareps.affiliate.manager.model.Affiliate;
 import com.emssanareps.affiliate.manager.model.Location;
 import com.emssanareps.affiliate.manager.repository.AffiliateRepository;
-import com.emssanareps.affiliate.manager.service.AffiliateContactService;
-import com.emssanareps.affiliate.manager.service.AffiliateService;
-import com.emssanareps.affiliate.manager.service.BeneficiaryService;
-import com.emssanareps.affiliate.manager.service.LocationService;
+import com.emssanareps.affiliate.manager.service.*;
+import com.emssanareps.affiliate.manager.util.DaneLocation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +26,16 @@ public class AffiliateServiceImpl implements AffiliateService {
     private final AffiliateRepository affiliateRepository;
     private final BeneficiaryService beneficiaryService;
     private final LocationService locationService;
+    private final DaneService daneService;
     private final AffiliateContactService affiliateContactService;
     private final AffiliateMapper affiliateMapper;
 
     @Autowired
-    public AffiliateServiceImpl(AffiliateRepository affiliateRepository, BeneficiaryService beneficiaryService, LocationService locationService, AffiliateContactService affiliateContactService, AffiliateMapper affiliateMapper) {
+    public AffiliateServiceImpl(AffiliateRepository affiliateRepository, BeneficiaryService beneficiaryService, LocationService locationService, DaneService daneService, AffiliateContactService affiliateContactService, AffiliateMapper affiliateMapper) {
         this.affiliateRepository = affiliateRepository;
         this.beneficiaryService = beneficiaryService;
         this.locationService = locationService;
+        this.daneService = daneService;
         this.affiliateContactService = affiliateContactService;
         this.affiliateMapper = affiliateMapper;
     }
@@ -59,9 +59,10 @@ public class AffiliateServiceImpl implements AffiliateService {
         toSave.setCivilStatus(CivilStatus.fromValue(affiliateRequest.getCivilStatus()));
         toSave.setStatus(Status.ACTIVO);
 
-        AffiliateResponse saved = affiliateMapper.toResponse(affiliateRepository.save(toSave));
+        AffiliateResponse saved = mapLocation(affiliateRepository.save(toSave));
 
         affiliateRequest.getBeneficiaries().forEach(beneficiary -> {
+
             saved.getBeneficiaries().add(beneficiaryService.create(saved.getId(), beneficiary));
         });
 
@@ -77,15 +78,14 @@ public class AffiliateServiceImpl implements AffiliateService {
     @Override
     public Page<AffiliateResponse> readAll(RequestDto<Object> requestDto) {
         Pageable pageable = PageRequest.of(requestDto.getPageNumber(), requestDto.getRowsNumber());
-        return affiliateMapper.toResponsePage(
-                affiliateRepository.findAll(pageable)
-        );
+        return affiliateRepository.findAll(pageable)
+                .map(this::mapLocation);
     }
 
     @Override
     public AffiliateResponse readById(Long affiliateId) {
         return affiliateRepository.findById(affiliateId)
-                .map(affiliateMapper::toResponse)
+                .map(this::mapLocation)
                 .orElseThrow(
                         () -> new EntityNotFoundException(AffiliateConstants.NOT_FOUND.concat(affiliateId.toString()))
                 );
@@ -109,9 +109,7 @@ public class AffiliateServiceImpl implements AffiliateService {
         toUpdate.setBeneficiaries(old.getBeneficiaries());
         toUpdate.setContacts(old.getContacts());
 
-        return affiliateMapper.toResponse(
-                affiliateRepository.save(toUpdate)
-        );
+        return mapLocation(affiliateRepository.save(toUpdate));
     }
 
     @Override
@@ -127,12 +125,20 @@ public class AffiliateServiceImpl implements AffiliateService {
     @Override
     public Page<AffiliateResponse> searchNameOrDescription(RequestDto<NameOrLastnameRequest> affiliateRequest) {
         Pageable pageable = PageRequest.of(affiliateRequest.getPageNumber(), affiliateRequest.getRowsNumber());
-        return affiliateMapper.toResponsePage(
-                affiliateRepository.findByNameContainingIgnoreCaseOrLastnameContainingIgnoreCase(
+        return affiliateRepository.findByNameContainingIgnoreCaseOrLastnameContainingIgnoreCase(
                         affiliateRequest.getData().getName(),
                         affiliateRequest.getData().getLastname(),
                         pageable
                 )
-        );
+                .map(this::mapLocation);
+    }
+
+    private AffiliateResponse mapLocation(Affiliate affiliate) {
+        AffiliateResponse affiliateResponse = affiliateMapper.toResponse(affiliate);
+        DaneLocation daneLocation = daneService.findLocationByCodes(affiliate.getLocation().getDaneDepartmentCode(), affiliate.getLocation().getDaneMunicipalityCode());
+        affiliateResponse.getLocation().setDepartment(daneLocation.getDepartmentName());
+        affiliateResponse.getLocation().setMunicipality(daneLocation.getMunicipalityName());
+
+        return affiliateResponse;
     }
 }

@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 @Getter
 public enum DocumentType {
-    TI("TARJETAIDENTIDAD"),
+    TI("TARJETA IDENTIDAD"),
     CC("CEDULA CIUDADANIA"),
     CE("CEDULA EXTRANJERIA"),
     PASAPORTE("PASAPORTE")

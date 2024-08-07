@@ -12,6 +12,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class DaneServiceImpl implements DaneService {
@@ -31,6 +32,24 @@ public class DaneServiceImpl implements DaneService {
     }
 
     @Override
+    public DaneLocation findLocationByCodes(Long departmentCode, Long municipalityCode) {
+        List<DaneLocation> daneData = fetchDaneLocations();
+
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+        decimalFormat.setGroupingUsed(true);
+        decimalFormat.setGroupingSize(3);
+
+        String municipalityCodeStr = decimalFormat.format(municipalityCode);
+        String departmentCodeStr = String.valueOf(departmentCode);
+
+        return daneData.stream()
+                .filter(data -> data.getDepartmentCode().equals(departmentCodeStr) &&
+                        data.getMunicipalityCode().equals(municipalityCodeStr))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(LocationConstants.MUNICIPALITY_DEPARTMENT_ERROR));
+    }
+
+    @Override
     public boolean validateDaneCodes(LocationRequest locationRequest) {
         List<DaneLocation> daneData = fetchDaneLocations();
 
@@ -39,7 +58,6 @@ public class DaneServiceImpl implements DaneService {
         decimalFormat.setGroupingSize(3);
 
         String municipalityCodeStr = decimalFormat.format(locationRequest.getDaneMunicipalityCode());
-
         String departmentCodeStr = String.valueOf(locationRequest.getDaneDepartmentCode());
 
         if (!municipalityCodeStr.startsWith(departmentCodeStr)) {
